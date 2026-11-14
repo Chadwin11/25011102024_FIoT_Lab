@@ -1,42 +1,38 @@
-# EXPERIMENT DETAILS
+# CAT5A — Timer 0 Interrupt and Periodic LED Toggle
 
-**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)
+## EXP / DATE
+CAT5 — 10/08/2026
 
-**DATE:** 10/08/2026
+## NAME OF EXP
+Generate a periodic time base using the 8051 Timer 0 interrupt.
 
-**NAME OF EXP:** Timer and Interrupt Programming
+## HARDWARE SETUP / PLATFORM
+AT89S52, 11.0592 MHz crystal, LED on P1.0, Keil C51, Timer 0 Mode 1 (16-bit).
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52 (8051)
-- Crystal Frequency: 11.0592 MHz
-- Software: Keil µVision
-- Output: LED
-
-**TASK NO:** CAT5A – Timer 0 Interrupt
+## TASK NO
+CAT5A — generate approximately 1 ms timer interrupts and toggle the LED after 1000 ticks.
 
 ## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-![CAT5A Circuit Diagram](circuit.png)
+## STEP-BY-STEP PROCEDURE
+1. Open TASK5A.uvproj and inspect main.c.
+2. Connect the LED to P1.0 with a current-limiting resistor if the board does not already include one.
+3. Build the project and program the HEX file.
+4. Reset the board and observe the LED.
+5. Timer 0 is loaded with TH0=0xFC and TL0=0x66.
+6. Each Timer 0 interrupt reloads the timer and increments ms_ticks.
+7. When ms_ticks reaches 1000, the ISR clears the count and toggles the LED.
+8. Record the observed period and compare it with the nominal timing.
 
-## OBJECTIVE
+## HOW THE CODE WORKS
+TMOD selects Timer 0 Mode 1. ET0, EA and TR0 enable the timer interrupt and start the timer. The ISR is declared as interrupt 1. The foreground while loop is empty because the ISR performs the timing.
 
-- Configure Timer 0 of the 8051 microcontroller.
-- Generate periodic interrupts using Timer 0.
-- Toggle an LED at one-second intervals.
-- Understand timer-based interrupt handling.
+## EXPECTED OBSERVATION
+P1.0 changes state after approximately 1000 timer ticks.
 
-## CORE LOGIC
-
-1. Configure Timer 0 in the required operating mode.
-2. Load the appropriate timer initial values.
-3. Enable Timer 0 interrupt using ET0.
-4. Enable global interrupts using EA.
-5. Start Timer 0 using TR0.
-6. Execute the Timer 0 interrupt service routine whenever overflow occurs.
-7. Maintain a counter to generate a one-second interval.
-8. Toggle the LED after the required number of timer interrupts.
-9. Repeat continuously.
+## TROUBLESHOOTING
+Check the oscillator frequency, reload bytes, timer interrupt enables, LED wiring and programmed HEX file.
 
 ## INFERENCE
-
-Timer 0 was configured to generate periodic interrupts. The interrupt service routine was used to toggle the LED at one-second intervals, demonstrating timer operation and interrupt handling in the AT89S52 microcontroller.
+The task demonstrates interrupt-driven timing instead of software-delay timing.
