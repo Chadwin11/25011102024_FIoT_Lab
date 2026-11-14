@@ -1,41 +1,35 @@
-# EXPERIMENT DETAILS
+# CAT11 — Task 11A: ESP8266 TCP Server with HTTP Response
 
-**EXP:** CONTINUOUS ASSESSMENT 11 (CAT11 / 10C-10D)
+## EXP
+CAT11
 
-**DATE:** 12/10/2026
+## DATE
+14/10/2026
 
-**NAME OF EXP:** HTTP Server - STM32-Wemos Wi-Fi Modem Using AT Commands
+## NAME OF EXP
+HTTP server using STM32 and Wemos D1 Mini ESP8266 with AT commands.
 
-**HARDWARE SETUP / PLATFORM:** CubeMX + Keil MDK + STM32F103C8T6 + Wemos D1 Mini + Browser
+## HARDWARE SETUP / PLATFORM
+- STM32F103C8T6 Blue Pill
+- Wemos D1 Mini (ESP8266)
+- STM32CubeMX and Keil MDK-ARM
+- Browser as HTTP client
 
----
+## TASK NO
+Task 11A — configure the ESP8266 TCP server and return an HTTP response.
 
-## TASK 11A : Configure ESP8266 TCP Server & Static HTTP Response
-
-### 1. Hardware Setup & Circuit Diagram
-
-- STM32F103C8T6 (`USART1` <-> Wemos D1 Mini, `USART2` <-> PC)
-- HTTP Client: Web Browser on port 80
-
+## CIRCUIT DIAGRAM
 ![Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## CORE LOGIC / PSEUDOCODE / CODE BASE
+1. Configure the ESP8266 for multiple TCP connections.
+2. Start the TCP server on port 80.
+3. Receive incoming client data through ESP8266 serial notifications.
+4. Identify the connection ID and HTTP request.
+5. Construct an HTTP response with content type and content length.
+6. Send the response using the ESP8266 send-data command and close the client connection.
 
-**Working Principle:**
+The task folder contains the STM32CubeMX configuration, Core source, Drivers, and MDK-ARM project directory.
 
-Enables multi-connection TCP server (`AT+CIPMUX=1`, `AT+CIPSERVER=1,80`), parses incoming `+IPD,<link_id>,<len>:GET /` notifications, computes `Content-Length`, and sends a two-step `AT+CIPSEND` HTML response followed by `AT+CIPCLOSE`.
-
-**Pseudocode:**
-
-1. Send `AT+CIPMUX=1` and `AT+CIPSERVER=1,80`.
-2. Wait for `+IPD,<link_id>,...` from browser.
-3. Construct `HTTP/1.1 200 OK` response with exact `Content-Length`.
-4. Issue `AT+CIPSEND=<link_id>,<len>`, wait for `>`, transmit HTTP response, and close connection.
-
-**Code Base:**
-
-- Two-step `AT+CIPSEND` protocol guarantees clean TCP framing for web browsers.
-
-### 3. Inference
-
-The STM32 acts as a lightweight embedded web server over serial AT commands, serving valid HTML pages to any browser on the LAN.
+## INFERENCE
+The project code is structured to use the STM32 and ESP8266 as an embedded HTTP server for browser requests. This describes the implementation approach and does not claim a live network test result.

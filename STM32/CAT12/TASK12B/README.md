@@ -1,41 +1,32 @@
-# EXPERIMENT DETAILS
+# CAT12 — Task 12B: Switch-Controlled LED State
 
-**EXP:** CONTINUOUS ASSESSMENT 12 (CAT12 / 11)
+## EXP
+CAT12
 
-**DATE:** 14/10/2026
+## DATE
+23/10/2026
 
-**NAME OF EXP:** STM32F401RE Cortex-M4: GPIO and User Input Programming
+## NAME OF EXP
+Nucleo-F401RE user switch input with remembered LED state.
 
-**HARDWARE SETUP / PLATFORM:** CubeMX + Keil MDK + STM32 Nucleo-F401RE
+## HARDWARE SETUP / PLATFORM
+- STM32 Nucleo-F401RE
+- On-board LED LD2 on PA5
+- User button B1 on PC13
+- STM32CubeMX and Keil MDK-ARM
 
----
+## TASK NO
+Task 12B — detect a button press and toggle the LED state so it remains after the button is released.
 
-## TASK 12B (Task 2) : On-board Switch Control with State Remembrance
-
-### 1. Hardware Setup & Circuit Diagram
-
-- STM32 `NUCLEO-F401RE`
-- Onboard LED: `PA5` (LD2)
-- Onboard User Button B1: `PC13` (Active-Low)
-
+## CIRCUIT DIAGRAM
 ![Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## CORE LOGIC / PSEUDOCODE / CODE BASE
+1. Read the user button input on PC13.
+2. Detect a valid press transition and apply the debounce handling in the application.
+3. Invert the stored LED state.
+4. Write the stored state to PA5.
+5. Continue monitoring the button.
 
-**Working Principle:**
-
-Monitors Nucleo user button `B1` (`PC13`) with 50 ms debouncing and latches `led_state` on each valid press, retaining the toggled LED state after button release.
-
-**Pseudocode:**
-
-1. Read `PC13` and detect falling edge (`SET -> RESET`).
-2. Apply 50 ms `HAL_GetTick()` debounce filter.
-3. Invert `led_state` and write to `PA5`, preserving state when `PC13` is released.
-
-**Code Base:**
-
-- Stateful toggle latch using `led_state` and `prev_btn` edge tracking.
-
-### 3. Inference
-
-LD2 latches ON/OFF across button releases with zero bounce glitches.
+## INFERENCE
+The task demonstrates switch input processing and state retention for GPIO output control. The source implements the state-based approach; no independent hardware test result is asserted here.
