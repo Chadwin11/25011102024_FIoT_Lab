@@ -1,63 +1,35 @@
-# CAT6A – 8051 UART Initialization and Character Transmission
+# CAT6A — UART Serial Transmission
 
-## Experiment Details
-- **Course:** 25CS2741 – Fundamentals of Internet of Things + Lab
-- **Experiment:** UART Initialization and Character Transmission
-- **Date:** 17/08/26
-- **Microcontroller:** AT89S52 (8051)
-- **Software:** Keil µVision
-- **Programming Language:** Embedded C
+## EXP / DATE
+CAT6 — 17/08/2026
 
-## Aim
-To configure the UART of the AT89S52 microcontroller and transmit characters serially to a PC terminal.
+## NAME OF EXP
+Transmit serial text from the AT89S52 using its UART.
 
-## Hardware Requirements
-- AT89S52 Development Board
-- USB-to-TTL Converter
-- USB Cable
-- PC with PuTTY Terminal
+## HARDWARE SETUP / PLATFORM
+AT89S52, 11.0592 MHz crystal, USB-to-TTL adapter, PuTTY or another serial terminal, Keil C51. UART configuration: 9600 baud, 8 data bits, no parity, one stop bit.
 
-## UART Configuration
-- **Communication Mode:** 8-bit UART
-- **Baud Rate:** 9600 bps
-- **Stop Bits:** 1
-- **Parity:** None
-- **Communication:** Asynchronous Serial Communication
+## TASK NO
+CAT6A — configure UART and repeatedly transmit a greeting message to the PC.
 
-## Pin Configuration
+## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-| AT89S52 Pin | Connection |
-|---|---|
-| P3.1 (TXD) | USB-to-TTL RX |
-| P3.0 (RXD) | USB-to-TTL TX |
-| GND | USB-to-TTL GND |
+## STEP-BY-STEP PROCEDURE
+1. Connect AT89S52 TXD P3.1 to adapter RXD.
+2. Connect AT89S52 RXD P3.0 to adapter TXD.
+3. Connect adapter GND to board GND. Use a logic-level-compatible USB-to-TTL adapter, not a direct RS-232 port.
+4. Open TASK6A.uvproj and main.c in Keil.
+5. Build and program the generated HEX file.
+6. Open PuTTY, select the adapter COM port and configure 9600 baud, 8 data bits, no parity, one stop bit, no flow control.
+7. Reset the 8051. Observe “Hello from 8051” printed repeatedly with CR/LF.
+8. If output is garbled or absent, verify baud rate, oscillator, TX/RX crossover and common ground.
 
-## Circuit Diagram
+## HOW THE CODE WORKS
+Timer 1 Mode 2 generates the baud clock. TH1=0xFD selects 9600 baud at 11.0592 MHz with SMOD=0. SCON=0x50 selects UART Mode 1 and enables reception. uart_tx_char() waits for TI; uart_tx_string() sends each character in turn.
 
-![CAT6A Circuit Diagram](circuit.png)
+## EXPECTED OBSERVATION
+The terminal repeatedly displays the greeting message.
 
-## Task Description
-- Initialize the UART in 8-bit mode.
-- Configure the baud rate to 9600 bps.
-- Transmit the message continuously:
-
-  Hello from 8051
-
-- Display the received characters on the PC using PuTTY.
-
-## Algorithm
-1. Initialize the UART registers.
-2. Configure the baud rate.
-3. Enable serial communication.
-4. Load each character into the transmit buffer.
-5. Wait until transmission is complete.
-6. Continue transmitting the message.
-
-## Source Files
-- uart_tx.c – Embedded C source code.
-- uart_tx.uvproj – Keil project file.
-- Objects/uart_tx.hex – Compiled HEX file.
-- circuit.png – Circuit diagram.
-
-## Result
-The UART of the AT89S52 microcontroller was configured successfully, and the message was transmitted serially to the PC terminal.
+## INFERENCE
+The task demonstrates asynchronous serial transmission from an 8051 to a PC terminal.
