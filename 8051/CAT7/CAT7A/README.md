@@ -1,42 +1,37 @@
-# EXPERIMENT DETAILS
+# CAT7A — 16×2 LCD Initialization and Text Display
 
-**EXP:** CONTINUOUS ASSESSMENT 7 (CAT7)
+## EXP / DATE
+CAT7 — 24/08/2026
 
-**DATE:** 24/08/2026
+## NAME OF EXP
+Interface an HD44780-compatible 16×2 LCD with the AT89S52 in 4-bit mode.
 
-**NAME OF EXP:** LCD Interfacing and Display Control
+## HARDWARE SETUP / PLATFORM
+AT89S52, 16×2 LCD, 4-bit interface, Keil C51, lcd.c and lcd.h driver files.
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52 (8051)
-- Display: 16×2 LCD (HD44780 compatible)
-- Interface: 4-bit mode
-- Crystal Frequency: 11.0592 MHz
-- Software: Keil µVision
-
-**TASK NO:** CAT7A – LCD Initialization and Character Display
+## TASK NO
+CAT7A — initialize the LCD and display text on both rows.
 
 ## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-![CAT7A Circuit Diagram](circuit.png)
+## STEP-BY-STEP PROCEDURE
+1. Open TASK7A.uvproj.
+2. Inspect lcd.h and lcd.c to identify the actual RS, EN and data-pin assignments. Use these definitions as the wiring source of truth.
+3. Connect LCD VSS to GND and VDD to the supported supply. Connect the contrast pin through a potentiometer.
+4. Connect RS, EN and the four data lines exactly as defined in the driver. Tie R/W low if the driver uses write-only mode.
+5. Ensure lcd.c and main.c are both included in the Keil project.
+6. Build and program the HEX file.
+7. Reset the board and adjust contrast until characters are visible.
+8. Observe row 1: a character followed by “T89S52 4-Bit”.
+9. Observe row 2: “16x2 LCD Ready!”.
+10. If text is absent or shifted, recheck the pin map and initialization sequence.
 
-## OBJECTIVE
+## HOW THE CODE WORKS
+lcd_init() initializes 4-bit mode. lcd_cmd() sends display commands, lcd_data() sends a character, and lcd_puts() sends a string. Command 0x80 selects the first row start; 0xC0 selects the second row start.
 
-- Interface a 16×2 LCD with the AT89S52 microcontroller.
-- Initialize the LCD in 4-bit communication mode.
-- Implement LCD command and data functions.
-- Display individual characters and strings on the LCD.
-- Display information on both rows of the LCD.
-
-## CORE LOGIC
-
-1. Configure the microcontroller ports connected to the LCD.
-2. Initialize the LCD using the required 4-bit initialization sequence.
-3. Configure the LCD for two-line display and cursor settings.
-4. Implement `lcd_cmd()` to send commands to the LCD.
-5. Implement `lcd_data()` to send character data.
-6. Send the required characters and strings to the LCD.
-7. Display the output on the first and second rows.
+## TROUBLESHOOTING
+Blank display: check power and contrast. Garbled text: check data-line order and initialization delays. No response: compare wiring with lcd.h.
 
 ## INFERENCE
-
-The 16×2 LCD was successfully interfaced with the AT89S52 microcontroller using 4-bit communication. LCD initialization, command transmission, and character/string display operations were implemented.
+This task demonstrates a reusable LCD driver and 4-bit parallel communication.

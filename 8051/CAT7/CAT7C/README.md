@@ -1,47 +1,45 @@
-# EXPERIMENT DETAILS
+# CAT7C — Keypad-Controlled LCD Character Movement
 
-**EXP:** CONTINUOUS ASSESSMENT 7 (CAT7)
+## EXP / DATE
+CAT7 — 24/08/2026
 
-**DATE:** 24/08/2026
+## NAME OF EXP
+Use a 4×4 matrix keypad to move a character across a 16×2 LCD.
 
-**NAME OF EXP:** LCD Interfacing and Display Control
+## HARDWARE SETUP / PLATFORM
+AT89S52, 16×2 LCD using lcd.c/lcd.h, 4×4 keypad rows P1.0–P1.3 and columns P1.4–P1.7 as defined in main.c, Keil C51.
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52 (8051)
-- Display: 16×2 LCD (HD44780 compatible)
-- Input: 4×4 Matrix Keypad
-- LCD Interface: 4-bit mode
-- Crystal Frequency: 11.0592 MHz
-- Software: Keil µVision
-
-**TASK NO:** CAT7C – Keypad-Based Character Movement
+## TASK NO
+CAT7C — move the displayed asterisk using directional keypad keys.
 
 ## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-![CAT7C Circuit Diagram](circuit.png)
+## STEP-BY-STEP PROCEDURE
+1. Open TASK7C.uvproj.
+2. Inspect lcd.h/lcd.c for LCD pins and main.c for keypad pin assignments.
+3. Connect keypad rows to P1.0–P1.3 and columns to P1.4–P1.7.
+4. Connect the LCD according to lcd.h. Check that the LCD wiring does not conflict with keypad port usage.
+5. Build the project with main.c and lcd.c.
+6. Program the HEX file and reset the board.
+7. Confirm an asterisk appears at the first LCD position.
+8. Press 2 to move up, 8 down, 4 left and 6 right.
+9. Observe the asterisk move one position at a time. The program restricts the cursor to two rows and 16 columns.
+10. Release each key before the next press.
 
-## OBJECTIVE
+## HOW THE CODE WORKS
+keypad_scan() drives one row low at a time and reads the column nibble. A debounce delay confirms a key and the function waits for release. The program erases the old asterisk, updates row/column coordinates and draws it at the new position.
 
-- Interface a 4×4 matrix keypad with the AT89S52.
-- Interface a 16×2 LCD with the microcontroller.
-- Detect key presses and control character movement.
-- Move the displayed character in four directions using keypad inputs.
+## KEY MAP
+| Key | Movement |
+|---|---|
+| 2 | Up |
+| 8 | Down |
+| 4 | Left |
+| 6 | Right |
 
-## CORE LOGIC
-
-1. Initialize the LCD in 4-bit mode.
-2. Configure the keypad rows and columns for scanning.
-3. Continuously scan the keypad to detect key presses.
-4. Assign directional controls to the following keys:
-   - **2** – Move Up
-   - **8** – Move Down
-   - **4** – Move Left
-   - **6** – Move Right
-5. Read the pressed key and determine the required movement direction.
-6. Update the character's row and column position.
-7. Clear or update the LCD display and show the character at its new position.
-8. Repeat the process continuously.
+## TROUBLESHOOTING
+If directions are wrong, verify row/column orientation. If keys repeat, inspect debounce and release handling. If LCD coordinates are wrong, check lcd_goto() and display dimensions.
 
 ## INFERENCE
-
-The 4×4 matrix keypad was interfaced with the AT89S52 to control character movement on a 16×2 LCD. Directional key inputs were detected and used to update the character's position on the display.
+The task combines keypad scanning, debouncing, coordinate state and LCD cursor control.

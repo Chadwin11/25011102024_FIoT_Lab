@@ -1,41 +1,35 @@
-# EXPERIMENT DETAILS
+# CAT7B — LCD Cursor Positioning and Dynamic Counter
 
-**EXP:** CONTINUOUS ASSESSMENT 7 (CAT7)
+## EXP / DATE
+CAT7 — 24/08/2026
 
-**DATE:** 24/08/2026
+## NAME OF EXP
+Position the LCD cursor and display a changing numerical value.
 
-**NAME OF EXP:** LCD Interfacing and Display Control
+## HARDWARE SETUP / PLATFORM
+AT89S52, 16×2 HD44780-compatible LCD, 4-bit interface, Keil C51, lcd.c and lcd.h.
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52 (8051)
-- Display: 16×2 LCD (HD44780 compatible)
-- Interface: 4-bit mode
-- Crystal Frequency: 11.0592 MHz
-- Software: Keil µVision
-
-**TASK NO:** CAT7B – LCD Cursor Positioning and Dynamic Value Display
+## TASK NO
+CAT7B — display a heading and incrementing counter on the LCD.
 
 ## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-![CAT7B Circuit Diagram](circuit.png)
+## STEP-BY-STEP PROCEDURE
+1. Open TASK7B.uvproj and inspect lcd.h for the LCD pin mapping.
+2. Wire LCD power, ground, contrast, RS, EN and data lines to match lcd.c.
+3. Build the project with main.c and lcd.c included.
+4. Program the HEX file and reset the AT89S52.
+5. Confirm the first row displays “AT89S52 Counter:”.
+6. Confirm the second row displays “Value:” followed by a number.
+7. Observe the value increment approximately every 500 ms.
+8. Watch the display as the number gains digits; the trailing spaces in the source clear old characters.
 
-## OBJECTIVE
+## HOW THE CODE WORKS
+lcd_goto(row,column) selects a cursor location. lcd_puts() writes labels. lcd_print_number() displays the unsigned integer. counter increments in the infinite loop and delay_500ms() controls the update interval.
 
-- Implement cursor positioning on a 16×2 LCD.
-- Display text at specific row and column positions.
-- Display strings using a dedicated function.
-- Display numerical values dynamically on the LCD.
-
-## CORE LOGIC
-
-1. Initialize the 16×2 LCD in 4-bit mode.
-2. Implement `lcd_cmd()` to send LCD commands.
-3. Implement `lcd_data()` to send character data.
-4. Implement `lcd_goto(row, column)` to position the cursor.
-5. Implement `lcd_puts(string)` to display strings.
-6. Implement `lcd_print_number(value)` to display numerical values.
-7. Update the LCD display with the required text and numerical values.
+## TROUBLESHOOTING
+Check cursor row/column addressing, contrast, data wiring and lcd_print_number(). If old digits remain, inspect the spaces written after the value.
 
 ## INFERENCE
-
-LCD cursor positioning and dynamic data display operations were implemented using the AT89S52 microcontroller. Text and numerical values can be displayed at specific positions on the 16×2 LCD.
+The task demonstrates cursor addressing and dynamic numerical output using an LCD library.
