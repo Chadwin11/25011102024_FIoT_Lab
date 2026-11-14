@@ -1,59 +1,36 @@
-# EXPERIMENT DETAILS
+# CAT6B — Interrupt-Driven UART Receive and Echo
 
-**EXP:** CONTINUOUS ASSESSMENT 6 (CAT6)
+## EXP / DATE
+CAT6 — 17/08/2026
 
-**DATE:** 17/08/2026
+## NAME OF EXP
+Receive UART characters using a serial interrupt and ring buffer, then echo them.
 
-**NAME OF EXP:** UART Driver and Serial Debugging
+## HARDWARE SETUP / PLATFORM
+AT89S52, 11.0592 MHz crystal, USB-to-TTL adapter, PuTTY, Keil C51. UART is configured for 9600 baud, 8-N-1.
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52 (8051)
-- Crystal Frequency: 11.0592 MHz
-- Compiler: Keil µVision
-- Serial Communication: USB-to-TTL Converter
-- Terminal Software: PuTTY
-- Baud Rate: 9600 bps
-
-**TASK NO:** CAT6B – UART Character Echo
+## TASK NO
+CAT6B — accept characters from the PC and transmit each received character back.
 
 ## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-![CAT6B Circuit Diagram](circuit.png)
+## STEP-BY-STEP PROCEDURE
+1. Connect P3.1/TXD to adapter RXD, P3.0/RXD to adapter TXD and GND to GND.
+2. Check adapter logic voltage compatibility.
+3. Open TASK6B.uvproj and main.c.
+4. Build and program the HEX file.
+5. Open the terminal at 9600 baud, 8-N-1, no flow control.
+6. Reset the MCU and type a few characters.
+7. The serial interrupt receives each byte and stores it in the ring buffer.
+8. The foreground loop removes queued bytes and transmits them back.
+9. Test short bursts first; the ring buffer has finite capacity.
 
-## CORE LOGIC
+## HOW THE CODE WORKS
+uart_init() configures Timer 1 and enables the serial interrupt. uart_isr() reads SBUF when RI is set, clears RI and stores the byte if buffer space remains. rx_head is the producer index and rx_tail is the consumer index. TI completion clears tx_busy. The main loop echoes queued characters outside the receive ISR.
 
-1. Initialize UART in Mode 1 (8-bit asynchronous communication).
-2. Configure Timer 1 in Mode 2 for baud rate generation.
-3. Set TH1 = 0xFD for 9600 baud at 11.0592 MHz.
-4. Enable serial reception using SCON = 0x50.
-5. Start Timer 1.
-6. Wait until a character is received by checking the RI flag.
-7. Read the received character from SBUF.
-8. Clear the RI flag.
-9. Transmit the same character back through UART.
-10. Repeat continuously to echo every received character.
-
-## UART CONFIGURATION
-
-| Parameter | Configuration |
-|---|---|
-| UART Mode | Mode 1 |
-| Baud Rate | 9600 bps |
-| Data Bits | 8 |
-| Parity | None |
-| Stop Bits | 1 |
-| Timer | Timer 1, Mode 2 |
-
-## HARDWARE CONNECTIONS
-
-| AT89S52 Pin | USB-to-TTL Pin |
-|---|---|
-| P3.0 / RXD (Pin 10) | TXD |
-| P3.1 / TXD (Pin 11) | RXD |
-| GND | GND |
-
-A common ground connection is required between the 8051 board and the USB-to-TTL converter.
+## TROUBLESHOOTING
+Check crossed TX/RX wiring, common ground, baud rate and oscillator. Missing characters during long bursts may indicate ring-buffer overflow.
 
 ## INFERENCE
-
-UART serial communication was successfully implemented using the AT89S52 microcontroller. The microcontroller receives characters from the PC through the serial interface and immediately transmits the same characters back. This demonstrates bidirectional serial communication using UART.
+The task demonstrates interrupt-driven reception and producer-consumer buffering on an 8051.
