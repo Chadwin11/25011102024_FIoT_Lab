@@ -1,39 +1,43 @@
-# EXPERIMENT DETAILS
+# CAT10 — Task 10C: Connect ESP8266 to Wi-Fi
 
-**EXP:** CONTINUOUS ASSESSMENT 10 (CAT10)
+## EXP / DATE
+CAT10 — 05/10/2026
 
-**DATE:** 05/10/2026
+## NAME OF EXP
+Configure ESP8266 station mode and join a wireless network using AT commands.
 
-**NAME OF EXP:** STM32-Wemos Wi-Fi Modem Interface Using AT Commands
+## HARDWARE SETUP / PLATFORM
+STM32F103C8T6 Blue Pill, Wemos D1 Mini ESP8266, USART1 modem link, USART2 PC terminal, STM32 HAL and Keil MDK-ARM. UART is configured at 115200 baud, 8-N-1.
 
-**HARDWARE SETUP / PLATFORM:** CubeMX + Keil MDK + STM32F103C8T6 + Wemos D1 Mini (ESP8266)
+## TASK NO
+Task 10C — join a Wi-Fi access point and query the assigned IP address.
 
----
-
-## TASK 10C : Connect Wemos ESP8266 to Wi-Fi Network
-
-### 1. Hardware Setup & Circuit Diagram
-
-- STM32F103C8T6 (`USART1` <-> Wemos D1 Mini, `USART2` <-> PC PuTTY)
-
+## CIRCUIT DIAGRAM
 ![Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## BEFORE RUNNING
+The example source contains placeholder credentials MyWiFi and password. Replace them locally with the credentials for your test network before building. Do not commit real Wi-Fi passwords to a public repository.
 
-**Working Principle:**
+## STEP-BY-STEP PROCEDURE
+1. Wire USART1 between STM32 PA9/PA10 and Wemos RX/TX, crossing TX to RX. Connect common GND.
+2. Connect the PC terminal through USART2.
+3. Open main.c and replace the example SSID and password locally.
+4. Build and flash the STM32 firmware.
+5. Open the terminal at 115200 baud, 8-N-1.
+6. Reset the board and observe the command sequence.
+7. AT checks the modem; AT+CWMODE=1 selects station mode.
+8. AT+CWJAP joins the configured access point. Allow time for association and authentication.
+9. AT+CIFSR requests the interface address. Record the IP address returned by the ESP8266.
+10. If connection fails, verify credentials, 2.4 GHz network availability, signal strength and ESP8266 supply stability.
 
-Executes the full station join sequence (`AT` -> `AT+CWMODE=1` -> `AT+CWJAP` -> `AT+CIFSR`) and prints connection verification and assigned IPv4 address on PuTTY.
+## HOW THE CODE WORKS
+esp_cmd() sends each AT command through USART1 and collects the modem response. log_pc() writes status text through USART2. The application performs station-mode setup, access-point association and IP query in sequence.
 
-**Pseudocode:**
+## EXPECTED OBSERVATION
+The modem should report successful association and an assigned IP address when valid credentials and a compatible network are available.
 
-1. Verify modem with `AT`.
-2. Set station mode `AT+CWMODE=1`.
-3. Join AP via `AT+CWJAP` and query IP with `AT+CIFSR`.
+## TROUBLESHOOTING
+ESP8266 modules generally require a 2.4 GHz Wi-Fi network. Check SSID/password spelling, modem firmware, UART wiring and power. Keep credentials out of public source control.
 
-**Code Base:**
-
-- Reports `WIFI MODE : STATION`, `WIFI STATUS : CONNECTED`, and DHCP IP address over `USART2`.
-
-### 3. Inference
-
-The STM32 autonomously provisions the ESP8266 onto the local Wi-Fi network and retrieves its DHCP IP address.
+## INFERENCE
+This task demonstrates Wi-Fi network association and IP configuration through a serial AT-command interface.

@@ -1,41 +1,41 @@
-# EXPERIMENT DETAILS
+# CAT9 — Task 9B: UART String Commands for LED Control
 
-**EXP:** CONTINUOUS ASSESSMENT 9 (CAT9)
+## EXP / DATE
+CAT9 — 28/09/2026
 
-**DATE:** 28/09/2026
+## NAME OF EXP
+Receive text commands over UART and control the STM32 onboard LED.
 
-**NAME OF EXP:** STM32 UART Command Controlled LED
+## HARDWARE SETUP / PLATFORM
+STM32F103C8T6 Blue Pill, USB-to-TTL adapter on USART1 PA9/PA10, PC terminal, STM32 HAL and Keil MDK-ARM. UART is configured at 115200 baud, 8-N-1. The application controls the onboard LED on PC13.
 
-**HARDWARE SETUP / PLATFORM:** CubeMX + Keil MDK + STM32F103C8T6 + USB-TTL + PuTTY
+## TASK NO
+Task 9B — accept LED ON, LED OFF and LED TOGGLE commands.
 
----
-
-## TASK 9B : String-Based Application Logic (LED ON / OFF / TOGGLE)
-
-### 1. Hardware Setup & Circuit Diagram
-
-- Blue Pill `STM32F103C8T6`
-- `USART1` (`PA9/PA10`) <-> PC PuTTY
-- Onboard LED `PC13`
-
+## CIRCUIT DIAGRAM
 ![Circuit Diagram](circuit.png)
 
-### 2. Core Logic / Pseudocode / Code Base
+## STEP-BY-STEP PROCEDURE
+1. Connect PA9 TX to adapter RX, PA10 RX to adapter TX and GND to GND.
+2. Use a 3.3 V-compatible UART adapter.
+3. Open TASK9B_UART_Cmd_LED.ioc or the Keil project and confirm USART1 and GPIO configuration.
+4. Build and download the firmware.
+5. Open the terminal at 115200 baud, 8 data bits, no parity, one stop bit and no flow control.
+6. Reset the board and wait for the prompt listing the accepted commands.
+7. Type LED ON and press Enter. The source writes PC13 RESET, the active-low ON state for the Blue Pill onboard LED.
+8. Type LED OFF and press Enter. The source writes PC13 SET.
+9. Type LED TOGGLE and press Enter. The source inverts the PC13 output.
+10. Try an unsupported command and observe the Unknown command response.
+11. Enter commands in uppercase and without extra spaces because strcmp() performs exact string matching.
 
-**Working Principle:**
+## HOW THE CODE WORKS
+Incoming bytes are appended to cmd_buf until CR or LF arrives. The firmware null-terminates the buffer and compares it with the three command strings using strcmp(). It performs the corresponding GPIO operation, transmits a response and resets cmd_idx for the next command.
 
-Accumulates incoming ASCII bytes until `\r` or `\n`, matches `LED ON`, `LED OFF`, or `LED TOGGLE` via `strcmp()`, drives `PC13`, and returns confirmation text.
+## EXPECTED OBSERVATION
+The onboard LED responds to the three supported commands and the terminal displays a confirmation prompt.
 
-**Pseudocode:**
+## TROUBLESHOOTING
+Remember PC13 LED polarity is active-low. If commands are ignored, check capitalization, trailing spaces, Enter key behavior, UART wiring, baud rate and command buffer length.
 
-1. Buffer received characters until CR/LF.
-2. Null-terminate string and compare against `LED ON`, `LED OFF`, `LED TOGGLE`.
-3. Execute corresponding GPIO action and transmit confirmation message.
-
-**Code Base:**
-
-- Demonstrates command-line framing over UART using `HAL_UART_Receive()` and `strcmp()`.
-
-### 3. Inference
-
-Command framing over UART transforms raw serial bytes into an interactive embedded CLI for actuator control.
+## INFERENCE
+The task demonstrates command framing, string comparison and UART-based actuator control.
