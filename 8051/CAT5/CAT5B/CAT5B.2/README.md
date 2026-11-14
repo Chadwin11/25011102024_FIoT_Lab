@@ -1,52 +1,39 @@
-# EXPERIMENT DETAILS
+# CAT5B.2 — Button-Selectable Square-Wave Frequency
 
-**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)
+## EXP / DATE
+CAT5 — 10/08/2026
 
-**DATE:** 10/08/2026
+## NAME OF EXP
+Generate square waves at selectable frequencies using Timer 0.
 
-**NAME OF EXP:** Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control
+## HARDWARE SETUP / PLATFORM
+AT89S52, 11.0592 MHz crystal, waveform output P1.1, active-low mode button P3.2, Keil C51, Timer 0 Mode 1. Use an oscilloscope or logic analyzer.
 
-**HARDWARE SETUP / PLATFORM:** AT89S52 (11.0592 MHz) + Keil C51 uVision + Oscilloscope
+## TASK NO
+CAT5B.2 — cycle through five timer reload settings using a push-button.
 
----
+## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-## TASK 5B.2: Variable-Frequency Square-Wave Generator
+## STEP-BY-STEP PROCEDURE
+1. Open TASK5B_2.uvproj and inspect main.c.
+2. Connect P1.1 to an oscilloscope input and connect instrument ground to MCU GND.
+3. Connect the mode button to P3.2 in the active-low arrangement expected by the source.
+4. Build and program the HEX file.
+5. Reset the MCU. freq_mode starts at zero.
+6. Observe the initial square wave on the oscilloscope.
+7. Press and release the button. The source debounces the press, advances freq_mode, waits for release and debounces again.
+8. Repeat to cycle through the five reload table entries.
+9. Measure and record each output frequency with the oscilloscope.
 
-### 1. Hardware Setup & Circuit Diagram
+## HOW THE CODE WORKS
+th_table and tl_table contain timer preload values. The ISR reloads Timer 0 and toggles WAVE_OUT. Each interrupt is one half-cycle, so the measured output frequency depends on twice the interrupt interval.
 
-- **MCU:** AT89S52 @ 11.0592 MHz
-- **Signal Output Pin:** `P1.1` → Oscilloscope Channel 1
-- **Mode Selector Button:** `P3.2`
-- **Frequency Modes:** 100 Hz, 500 Hz, 1 kHz, 2 kHz, 5 kHz
+## EXPECTED OBSERVATION
+The output frequency changes when the button is pressed. The source comments identify nominal settings of 100 Hz, 500 Hz, 1 kHz, 2 kHz and 5 kHz; verify actual values on the instrument.
 
-![CAT5B.2 Circuit Diagram](circuit.png)
+## TROUBLESHOOTING
+Check P1.1, common ground, timer interrupt setup, button pull-up and crystal frequency. If measured frequencies differ, review the timer machine-cycle and half-period calculation.
 
-### 2. Core Logic / Pseudocode / Code Base
-
-**Working Principle:**
-
-Timer 0 operates in Mode 1 to generate interrupts at selected half-period intervals. A lookup table containing Timer 0 reload values determines the output frequency. Each interrupt toggles `P1.1`, producing a 50% duty-cycle square wave.
-
-Pressing the mode selector button connected to `P3.2` cycles through the five available frequency modes.
-
-**Pseudocode:**
-
-1. Precompute 16-bit Timer 0 reload values for the five frequency modes.
-2. Configure Timer 0 in Mode 1.
-3. In the Timer 0 ISR:
-   - Reload `TH0` and `TL0` using the selected lookup-table values.
-   - Toggle the `P1.1` output pin.
-4. Poll the `P3.2` button and debounce the input.
-5. Increment `freq_mode` modulo 5 when the button is pressed.
-
-**Code Base:**
-
-- `th_table[]` and `tl_table[]` store the Timer 0 reload values.
-- Lookup tables avoid runtime division inside the interrupt service routine.
-- `freq_mode` selects the current output frequency.
-
-**Build Note:** Rebuild `TASK5B_2.uvproj` in Keil C51 uVision to regenerate `Objects/TASK5B_2.hex` before flashing the AT89S52 board.
-
-### 3. Inference
-
-Timer 0 reload lookup tables enable variable-frequency square-wave generation from 100 Hz to 5 kHz. The output maintains an approximately 50% duty cycle, and the frequency can be changed using the mode selector button.
+## INFERENCE
+The experiment demonstrates timer-based waveform generation and button-controlled frequency selection.
