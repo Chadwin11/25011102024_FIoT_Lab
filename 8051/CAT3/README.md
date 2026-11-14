@@ -1,54 +1,40 @@
-# CAT3 – Timer-Based LED Pattern Generator and Button Interrupt Controller
+# CAT3 — Switch-Controlled LED Modes
 
-**EXP:** CAT3
+## EXP / DATE
+CAT3 — 27/07/2026
 
-**DATE:** 27/07/2026
+## NAME OF EXP
+8051 GPIO input, push-button debouncing and LED pattern state machine.
 
-**NAME OF EXP:** Timer-Based LED Pattern Generator and Button Interrupt Controller
+## HARDWARE SETUP / PLATFORM
+AT89S52, four LEDs driven by the lower nibble of P1 in cat_03.c, active-low push-button input P2.6, Keil C51. The folder also contains switch_logic.c, a separate simple P2.0-to-P1.0 example.
 
-**HARDWARE SETUP / PLATFORM:**
-- Microcontroller: AT89S52
-- Architecture: 8051
-- Development Board: AT89S52 Development Board
-- LEDs: Four LEDs connected to GPIO pins
-- Input: One push-button connected to a GPIO pin
+## TASK NO
+CAT3 — switch between running LED, binary counter, alternating pattern and all-LED flash modes.
 
-**TASK NO:**
-- Design and implement a register-level GPIO controller.
-- Configure four LEDs as digital outputs.
-- Configure a push-button as a digital input.
-- Implement four LED operating modes using bare-metal Embedded C.
-- Implement switch debouncing to ensure one state transition per button press.
+## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-**CIRCUIT DIAGRAM:**
+## STEP-BY-STEP PROCEDURE
+1. Open Switch_logic_28.7.uvproj in Keil and inspect which C source files are included in the build.
+2. For the four-mode assessment, use cat_03.c. Do not confuse it with switch_logic.c, which is a separate single-LED example.
+3. Connect four LEDs to P1.0–P1.3 using suitable current-limiting resistors.
+4. Connect the push-button to P2.6 in the active-low arrangement expected by button_pressed().
+5. Build the project and resolve compiler errors.
+6. Program the generated HEX file and reset the board.
+7. Press and release the button once to advance to the next mode.
+8. Observe the running LED pattern, then the 0–15 binary count, then alternating 0101/1010, then all four LEDs flashing.
+9. Press again to return to the first mode.
+10. Record the actual board wiring and observations.
 
-![CAT3 Circuit Diagram](circuit.png)
+## HOW THE CODE WORKS
+button_pressed() checks P2.6, waits 20 ms, checks again, then waits for release. state stores the selected mode. Each state function updates the lower four P1 bits. The main loop dispatches the selected function.
 
-**CORE LOGIC / PSEUDOCODE / CODE BASE:**
+## EXPECTED OBSERVATION
+Each accepted button press advances one LED mode.
 
-**1. GPIO Configuration**
-- Configure four GPIO pins as LED outputs.
-- Configure one GPIO pin as button input.
-- Use direct register access.
+## TROUBLESHOOTING / SOURCE NOTE
+The current cat_03.c contains delay_ms(50 0) in state_all_flash(), which is invalid C syntax. Confirm the intended delay and correct this typo before building. Verify active-low button wiring. switch_logic.c only mirrors P2.0 to P1.0 and does not implement the four modes.
 
-**2. Button Handling**
-- Monitor the push-button input.
-- Implement software debouncing.
-- Detect valid button presses.
-- Advance to the next operating mode on each valid press.
-
-**3. LED Operating Modes**
-
-- **Mode 1 – Running LED:** LEDs turn ON sequentially from LED1 to LED4 and repeat.
-- **Mode 2 – Binary Counter:** LEDs display a four-bit binary count from 0000 to 1111 and repeat.
-- **Mode 3 – Alternating Pattern:** LEDs alternate between 1010 and 0101.
-- **Mode 4 – All LED Flash:** All four LEDs flash between 1111 and 0000.
-
-**4. Mode Switching**
-- Initially, all LEDs remain OFF.
-- Each valid button press advances the operating mode.
-- After Mode 4, the system returns to Mode 1.
-
-**INFERENCE:**
-
-A four-state LED control system is implemented using the AT89S52 microcontroller. The system demonstrates register-level GPIO control, LED sequencing, binary counting, alternating LED patterns and button-based mode switching with software debouncing.
+## INFERENCE
+The task demonstrates GPIO polling, switch debouncing and finite-state control on an 8051.
