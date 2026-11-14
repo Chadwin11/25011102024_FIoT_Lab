@@ -1,60 +1,37 @@
-# EXPERIMENT DETAILS
+# CAT5C — Stepper Motor Speed and Direction Control
 
-**EXP:** CONTINUOUS ASSESSMENT 5 (CAT5)
+## EXP / DATE
+CAT5 — 10/08/2026
 
-**DATE:** 10/08/2026
+## NAME OF EXP
+Control stepper motor stepping sequence, direction and speed using 8051 timer interrupts.
 
-**NAME OF EXP:** Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control
+## HARDWARE SETUP / PLATFORM
+AT89S52, stepper motor with a suitable driver, speed button P3.2, direction button P3.3, Port 1 upper-nibble driver outputs, 11.0592 MHz crystal, Keil C51. Never drive motor windings directly from MCU GPIO.
 
-**HARDWARE SETUP / PLATFORM:** AT89S52 (11.0592 MHz) + 8051 Development Board
+## TASK NO
+CAT5C — cycle through slow, medium and fast stepping and reverse the sequence direction.
 
----
+## CIRCUIT DIAGRAM
+![Circuit Diagram](circuit.png)
 
-## TASK 5C: Stepper Motor Speed and Direction Control
+## STEP-BY-STEP PROCEDURE
+1. Identify the stepper motor and compatible driver. Confirm the driver's input order matches step_seq[].
+2. Connect the four driver inputs to the Port 1 upper-nibble outputs used by the code.
+3. Connect motor power to the driver as specified by its datasheet and share ground with the MCU where required.
+4. Connect active-low speed and direction buttons to P3.2 and P3.3.
+5. Open TASK5C.uvproj, build and program the HEX file.
+6. Reset the MCU. The timer begins advancing through the four-step sequence.
+7. Press and release the speed button to cycle Slow (100 ms), Medium (50 ms) and Fast (10 ms).
+8. Press and release the direction button to reverse the sequence.
+9. Observe motor direction and speed. If the motor vibrates without rotating, switch off power and check coil pairing and driver sequence.
+10. Do not alter motor wiring while energized.
 
-### 1. Hardware Setup & Circuit Diagram
+## HOW THE CODE WORKS
+step_seq[] defines the four output patterns. Timer 0 provides a nominal 1 ms tick. ms_count determines when the next motor step occurs. speed_idx selects the interval; dir_cw selects forward or reverse index movement. The foreground loop debounces the two buttons.
 
-- **MCU:** AT89S52 @ 11.0592 MHz
-- **Output Device:** Stepper Motor
-- **Control Method:** Timer Interrupt-Based Step Sequencing
-- **Task Status:** Optional for this week
+## TROUBLESHOOTING
+Check driver supply, common ground, coil order, motor current rating, sequence and output mapping. Disconnect power if the motor overheats.
 
-![CAT5C Circuit Diagram](circuit.png)
-
-### 2. Core Logic / Pseudocode / Code Base
-
-**Working Principle:**
-
-The Timer 0 interrupt determines the step interval of the stepper motor. At every interrupt, the controller generates the next step sequence to rotate the motor.
-
-The motor speed is controlled by changing the time interval between consecutive steps.
-
-**Step Sequence:**
-
-```text
-1000
-0100
-0010
-0001
-```
-
-**Speed Settings:**
-
-- **Slow:** 100 ms/step
-- **Medium:** 50 ms/step
-- **Fast:** 10 ms/step
-
-**Pseudocode:**
-
-1. Configure Timer 0 to generate periodic interrupts.
-2. Store the stepper motor sequence.
-3. On every timer interrupt:
-   - Generate the next step pattern.
-   - Send the pattern to the motor interface.
-   - Advance to the next step.
-4. Change the timer interval to control motor speed.
-5. Repeat the sequence continuously.
-
-### 3. Inference
-
-Timer-based step sequencing enables controlled stepper motor rotation without software delay loops. Changing the timer interval controls motor speed while maintaining a consistent stepping sequence.
+## INFERENCE
+The task demonstrates timer-scheduled motor stepping with independent speed and direction controls.
